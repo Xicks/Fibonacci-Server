@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="DEFAULT_PATTERN">%highlight{[%-5level]} %style{[%date{ISO8601}] [%t] [%c{1}]}{Magenta} %msg %mdc%n</Property>
+
+        <!-- DEFAULT log path if not specified as parameter: -D LOG_PATH -->
+        <Property name="application.log.path">./logs</Property>
+        <Property name="LOG_PATH">${sys:application.log.path}</Property>
+
+        <!-- To be indexed -->
+        <Property name="LOG_JSON">${sys:LOG_PATH}/stdout.json</Property>
+        <Property name="LOG_JSON_GZIP">${sys:LOG_PATH}/stdout-%d{yyyy-MM-dd}-%i.json.gz</Property>
+
+        <!-- To be tailed (human-readable) -->
+        <Property name="LOG_FILE">${sys:LOG_PATH}/application.log</Property>
+        <Property name="LOG_FILE_GZIP">${sys:LOG_PATH}/application-%d{yyyy-MM-dd}-%i.log.gz</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${DEFAULT_PATTERN}"/>
+        </Console>
+
+        <RollingRandomAccessFile name="FILE" fileName="${sys:LOG_FILE}" filePattern="${sys:LOG_FILE_GZIP}">
+            <PatternLayout pattern="${DEFAULT_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="300 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="JSON" fileName="${sys:LOG_JSON}" filePattern="${sys:LOG_JSON_GZIP}">
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="300 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+
+        <Async name="ASYNC_FILE" includeLocation="true">
+            <AppenderRef ref="FILE"/>
+            <AppenderRef ref="JSON"/>
+        </Async>
+
+        <Async name="ASYNC_CONSOLE" includeLocation="true">
+            <AppenderRef ref="CONSOLE"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="ASYNC_CONSOLE"/>
+        </Root>
+        <Logger name="com.xicks.fibonacciserver" additivity="true" level="WARN">
+            <AppenderRef ref="ASYNC_FILE"/>
+        </Logger>
+    </Loggers>
+</Configuration>

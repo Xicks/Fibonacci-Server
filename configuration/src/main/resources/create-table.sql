@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS fibonacci (index INT PRIMARY KEY, value INT NOT NULL);
