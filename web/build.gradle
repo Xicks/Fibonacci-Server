@@ -1,0 +1,10 @@
+ext {
+    ktorVersion = "1.2.4"
+}
+
+dependencies {
+    compile project(":configuration")
+    compile group: 'io.ktor', name: 'ktor-server-core', version: ktorVersion
+    compile group: 'io.ktor', name: 'ktor-server-netty', version: ktorVersion
+    compile group: 'io.ktor', name: 'ktor-gson', version: ktorVersion
+}
