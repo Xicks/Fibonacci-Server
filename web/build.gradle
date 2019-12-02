@@ -3,7 +3,8 @@ ext {
 }
 
 dependencies {
-    compile project(":configuration")
+    compile project(":usecases")
+    
     compile group: 'io.ktor', name: 'ktor-server-core', version: ktorVersion
     compile group: 'io.ktor', name: 'ktor-server-netty', version: ktorVersion
     compile group: 'io.ktor', name: 'ktor-gson', version: ktorVersion

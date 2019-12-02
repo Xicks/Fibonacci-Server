@@ -2,10 +2,12 @@ package com.xicks.fibonacciserver.configuration
 
 import com.typesafe.config.ConfigFactory
 import com.xicks.fibonacciserver.HealthStatus
+import com.xicks.fibonacciserver.calculateFibonacci.CalculateFibonacciInteractor
+import com.xicks.fibonacciserver.calculateFibonacci.RetrieveFibonacciInteractor
 import com.xicks.fibonacciserver.health.HealthInteractor
-import com.xicks.fibonacciserver.interactors.Interactors
 import com.xicks.fibonacciserver.routes.fibonacciRoutes
 import io.ktor.application.Application
+import io.ktor.application.ApplicationStarted
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.config.HoconApplicationConfig
@@ -29,7 +31,11 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 
-object KtorConfiguration {
+class KtorConfiguration(
+    private val healthInteractor: HealthInteractor,
+    private val calculationInteractor: CalculateFibonacciInteractor,
+    private val retrieveFibonacciInteractor: RetrieveFibonacciInteractor
+) {
 
     @KtorExperimentalAPI
     fun startServer() {
@@ -51,14 +57,11 @@ object KtorConfiguration {
                 module {
                     management()
                 }
-            }).also {
-                println("Starting management server at port 8081")
-                it.start(false)
-            }
+            }).start(false)
 
             embeddedServer(Netty, applicationEngineEnvironment {
 
-                val hoconConfig = ConfigFactory.load().resolve()
+                val hoconConfig = ConfigFactory.load("reference.conf").resolve()
 
                 config = HoconApplicationConfig(hoconConfig)
                 val serverPort = config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt() ?: 8080
@@ -68,12 +71,9 @@ object KtorConfiguration {
                     port = serverPort
                 }
                 module {
-                    fibonacciServer()
+                    fibonacciServer(calculationInteractor, retrieveFibonacciInteractor)
                 }
-            }).also {
-                println("Starting application server at port 8080")
-                it.start(true)
-            }
+            }).start(true)
         } catch (e: Exception) {
             println(e)
         } finally {
@@ -81,10 +81,17 @@ object KtorConfiguration {
         }
     }
 
+    @KtorExperimentalAPI
     private fun Application.management() {
+
+        environment.monitor.subscribe(ApplicationStarted) {
+            val port = environment.config.property("ktor.management.port").getString()
+            println("Management services started at port $port...")
+        }
+
         routing {
             get("/health") {
-                val health = Interactors.healthInteractor.isHealthy()
+                val health = healthInteractor.isHealthy()
                 val statusCode = if(health.application == HealthStatus.UP) HttpStatusCode.OK else HttpStatusCode.InternalServerError
                 call.respond(statusCode, health)
             }
@@ -97,9 +104,19 @@ object KtorConfiguration {
         }
     }
 
-    private fun Application.fibonacciServer() {
+    @KtorExperimentalAPI
+    private fun Application.fibonacciServer(
+        calculationInteractor: CalculateFibonacciInteractor,
+        retrieveFibonacciInteractor: RetrieveFibonacciInteractor
+    ) {
+
+        environment.monitor.subscribe(ApplicationStarted) {
+            val port = environment.config.property("ktor.deployment.port").getString()
+            println("Application services started at port $port...")
+        }
+
         routing {
-            fibonacciRoutes()
+            fibonacciRoutes(calculationInteractor, retrieveFibonacciInteractor)
         }
 
         install(AutoHeadResponse)

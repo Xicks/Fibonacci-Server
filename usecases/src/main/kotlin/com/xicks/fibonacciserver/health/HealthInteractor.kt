@@ -9,7 +9,11 @@ class HealthInteractor(private val gateways: List<HealthGateway>) {
 
     suspend fun isHealthy() : Health {
         val resources = gateways.map {
-            ResourceHealth(it.resourceName, it.ping().toHealthStatus())
+            try {
+                ResourceHealth(it.resourceName, it.ping().toHealthStatus())
+            } catch (_: Exception) {
+                ResourceHealth(it.resourceName, HealthStatus.DOWN)
+            }
         }
         val healthy = resources.all { (_, status) -> status == HealthStatus.UP }
 
