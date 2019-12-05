@@ -3,7 +3,7 @@ FROM gradle:5.6.4-jdk11 AS build
 COPY . /home/gradle/src
 WORKDIR /home/gradle/src
 
-RUN gradle clean shadowJar -x test
+RUN gradle --no-daemon clean shadowJar -x test
 
 FROM openjdk:11-jre-slim
 
