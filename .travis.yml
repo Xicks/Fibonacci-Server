@@ -8,6 +8,10 @@ jdk: openjdk11
 sudo: required
 services: docker
 
+branches:
+  only:
+    - master
+
 script:
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then ./gradlew clean test; fi'
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker build -t xicks/fibonacci-server . ; fi'
