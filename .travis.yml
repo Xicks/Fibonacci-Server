@@ -5,7 +5,6 @@ os: linux
 dist: trusty
 jdk: openjdk11
 
-sudo: required
 services: docker
 
 branches:
@@ -14,12 +13,17 @@ branches:
 
 script:
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then ./gradlew clean test; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker build -t xicks/fibonacci-server . ; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker build -t $DOCKER_ID/fibonacci-server . ; fi'
+
+after_success:
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker push $DOCKER_ID/fibonacci-server; fi'
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - rm -fr $HOME/.gradle/caches/*/scripts/
+
 cache:
   directories:
     - "$HOME/.gradle/caches/"
