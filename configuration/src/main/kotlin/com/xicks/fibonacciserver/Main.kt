@@ -8,5 +8,6 @@ import io.ktor.util.KtorExperimentalAPI
 fun main() = KtorConfiguration(
     Interactors.healthInteractor,
     Interactors.calculateFibonacciInteractor,
-    Interactors.retrieveFibonacciInteractor
+    Interactors.retrieveFibonacciInteractor,
+    Environment.hoconConfig
 ).startServer()

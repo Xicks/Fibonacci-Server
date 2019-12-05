@@ -1,6 +1,6 @@
 package com.xicks.fibonacciserver.configuration
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.Config
 import com.xicks.fibonacciserver.HealthStatus
 import com.xicks.fibonacciserver.calculateFibonacci.CalculateFibonacciInteractor
 import com.xicks.fibonacciserver.calculateFibonacci.RetrieveFibonacciInteractor
@@ -30,11 +30,11 @@ import io.ktor.util.KtorExperimentalAPI
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-
 class KtorConfiguration(
     private val healthInteractor: HealthInteractor,
     private val calculationInteractor: CalculateFibonacciInteractor,
-    private val retrieveFibonacciInteractor: RetrieveFibonacciInteractor
+    private val retrieveFibonacciInteractor: RetrieveFibonacciInteractor,
+    private val hoconConfig: Config
 ) {
 
     @KtorExperimentalAPI
@@ -43,9 +43,6 @@ class KtorConfiguration(
 
         try {
             managerServer = embeddedServer(Netty, applicationEngineEnvironment {
-
-                val hoconConfig = ConfigFactory.load().resolve()
-
                 config = HoconApplicationConfig(hoconConfig)
                 val managementPort =
                     config.propertyOrNull("ktor.management.port")?.getString()?.toInt() ?: 8081
@@ -60,9 +57,6 @@ class KtorConfiguration(
             }).start(false)
 
             embeddedServer(Netty, applicationEngineEnvironment {
-
-                val hoconConfig = ConfigFactory.load("reference.conf").resolve()
-
                 config = HoconApplicationConfig(hoconConfig)
                 val serverPort = config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt() ?: 8080
 
