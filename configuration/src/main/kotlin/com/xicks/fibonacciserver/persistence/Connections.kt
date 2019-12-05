@@ -1,6 +1,6 @@
 package com.xicks.fibonacciserver.persistence
 
-import com.xicks.fibonacciserver.Env
+import com.xicks.fibonacciserver.Environment
 import io.lettuce.core.ClientOptions
 import io.lettuce.core.RedisClient
 import io.lettuce.core.TimeoutOptions
@@ -16,8 +16,8 @@ object Connections {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     val redis: RedisAsyncCommands<String, String>? = try {
-        val host = Env.get("REDIS_HOST") ?: "localhost"
-        val port = Env.get("REDIS_PORT") ?: "3349"
+        val host = Environment.getOrDefault("REDIS_HOST", "redis.host", "localhost")
+        val port = Environment.getOrDefault("REDIS_PORT", "redis.port", "localhost")
         val client = RedisClient.create("redis://$host:$port")
 
         client.options = ClientOptions.builder()
@@ -33,12 +33,12 @@ object Connections {
     }
 
     val postgres: PgConnection? = try {
-        val user = Env.get("POSTGRES_USER") ?: "postgres"
-        val database = Env.get("POSTGRES_DATABASE") ?: "postgres"
-        val password = Env.get("POSTGRES_PASSWORD") ?: "admin"
+        val user = Environment.getOrDefault("POSTGRES_USER", "postgres.user", "postgres")
+        val database = Environment.getOrDefault("POSTGRES_DATABASE", "postgres.database", "postgres")
+        val password = Environment.getOrDefault("POSTGRES_PASSWORD", "postgres.password", "admin")
 
-        val host = Env.get("POSTGRES_HOST") ?: "localhost"
-        val port = Env.getInt("POSTGRES_PORT") ?: 5432
+        val host = Environment.getOrDefault("POSTGRES_HOST", "postgres.host", "localhost")
+        val port = Environment.getOrDefault("POSTGRES_PORT", "postgres.port", "5432")
         val properties = Properties().apply {
             setProperty("user", user)
             setProperty("password", password)
