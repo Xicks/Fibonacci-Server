@@ -1,5 +1,7 @@
-*Fibonacci Server* [![Build Status](https://travis-ci.org/Xicks/Fibonacci-Server.svg?branch=master)](https://travis-ci.org/Xicks/Fibonacci-Server)
---
+# Fibonacci Server  
+
+[![Build Status](https://travis-ci.org/Xicks/Fibonacci-Server.svg?branch=master)](https://travis-ci.org/Xicks/Fibonacci-Server)
+
 Web server that calculates fibonacci values and store the results on PostgresSQL and Redis.
 
 This is a learning project :)
