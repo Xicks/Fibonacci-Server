@@ -58,7 +58,9 @@ class KtorConfiguration(
 
             embeddedServer(Netty, applicationEngineEnvironment {
                 config = HoconApplicationConfig(hoconConfig)
-                val serverPort = config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt() ?: 8080
+                val serverPort = System.getenv("PORT")?.toInt()
+                    ?: config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt()
+                    ?: 8080
 
                 connector {
                     host = "0.0.0.0"
