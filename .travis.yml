@@ -28,3 +28,9 @@ cache:
   directories:
     - "$HOME/.gradle/caches/"
     - "$HOME/.gradle/wrapper/"
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: "qzJfRHWjF70TIyTwSlUbn/IC16nycWHWjWUX4EyvUnoG3mdj7OgZC+4kKgD94RC4EzPCv7biyyzcIL9kEDkCQXFkIblfPpzNcSx7ZCL9I2y+xHvyDdu3qpF8nVxvuCvXsVBvXQkAKgfAINT7E7GVbxQFaVrCcwqM+E6J5zYKqtLJYWlojGJWf1sZwS7Xo4cYVfdK4cdmItpLSM55fqSUziiWDi4J76Td1r0Jn4PlNf1lrWTf6zIppgG3TAA7SLA0QJhfwRfbWZ+AzV3oD323VwVQH12RDWkMCf6LsaJKV73C9Z/CB7rkfH2aQ7G2rkyGrso8wdEfZyuduejSxf0La/dV6tsU+Q0nsiluqqowF0kDd2xrEphCZbeZWL9dr33dAINElr0qvE2e0LlQ1dVihftL23/BGvfg5ymr0gTBfzjb3YOJYjAckiXQYnBpHIau7XvhkGO2681GS6GKtfeJcUZg1Jg/DRCjntMqZO6XDHfCbIZKF8HBgtx0l89lwYkQaaFQ4IiuTRT0Xn1PL306mulB3a717dQv7ZD5vSHtAIjyehgm23UZby9RBDMk1t21U/6Bwc4PJrIL3lQkZhx8OBHziLuzacJY12REz1v1+I576gYy13bGd86z+ZGTyC1I9tX/isVjzVmDh4qATwr3U99cK0TmY99wE5Jm0JJUkas="
+  app: the-fibonacci-server

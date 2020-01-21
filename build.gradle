@@ -67,3 +67,5 @@ shadowJar {
     transform(ServiceFileTransformer)
     transform(Log4j2PluginsCacheFileTransformer)
 }
+
+task stage(dependsOn: ['clean', 'shadowJar'])
